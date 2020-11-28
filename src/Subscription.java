@@ -6,6 +6,7 @@ public class Subscription {
     private ArrayList<Filter> filters = new ArrayList<Filter>();
 
     public Subscription(Actor actor, String domain, ArrayList<Filter> filters) {
+
         this.actor = actor;
         this.domain = domain;
         this.filters = filters;

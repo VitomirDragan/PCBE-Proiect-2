@@ -1,4 +1,6 @@
-public abstract class Actor extends Thread{
+import java.util.ArrayList;
+
+public abstract class Actor extends Thread {
     private String numeActor;
     protected Dispatcher dispatcher;
 
@@ -7,18 +9,12 @@ public abstract class Actor extends Thread{
         this.dispatcher = dispatcher;
     }
 
-    public void subscribeToEvent(String eventType)
-    {
-        dispatcher.acceptEventSubscription(eventType, this);
+    public void subscribeToEvent(String eventType, String domain, ArrayList<Filter> filters) {
+        dispatcher.acceptEventSubscription(eventType, this, domain, filters);
     }
 
-    public void subscribeToDomain(String domain, Filter filter)
-    {
-        dispatcher.acceptDomainSubscription(domain, this, filter);
-    }
 
-    public void generateEvent(Event e)
-    {
+    public void generateEvent(Event e) {
         dispatcher.postEvent(e);
     }
 

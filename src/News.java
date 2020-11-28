@@ -5,13 +5,15 @@ public class News {
     private Date datePublished;
     private Date dateLastEdited;
     private String autor;
+    private String domain;
 
-    public News(int id, String content, Date datePublished, Date dateLastEdited, String autor) {
+    public News(int id, String content, Date datePublished, Date dateLastEdited, String autor, String domain) {
         this.idNews = id;
         this.content = content;
         this.datePublished = datePublished;
         this.dateLastEdited = dateLastEdited;
         this.autor = autor;
+        this.domain = domain;
     }
 
     public String getContent() {
@@ -33,6 +35,8 @@ public class News {
     public int getIdNews() {
         return idNews;
     }
+
+    public  String getDomain(){return domain;}
 
     public void editNews(News n)
     {
