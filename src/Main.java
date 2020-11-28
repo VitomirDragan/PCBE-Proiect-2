@@ -13,18 +13,20 @@ public class Main {
     static final String domainSport = "Sport";
     static final String domainHoroscope = "Horoscope";
 
+
+
     public static void main(String[] args)
     {
         Dispatcher dispatcher = new Dispatcher();
         Thread dispatcherThread = new Thread(dispatcher);
-        dispatcherThread.run();
-
+        dispatcherThread.start();
+        
         Editor e1 = new Editor("Gigel", dispatcher);
         Editor e2 = new Editor("Maria", dispatcher);
         Editor e3 = new Editor("Cosmin", dispatcher);
-        e1.run();
-        e2.run();
-        e3.run();
+        e1.start();
+        e2.start();
+        e3.start();
 
         e1.subscribeToEvent(readNewsEvent, domainFitness, new ArrayList<>());
         e1.subscribeToEvent(readNewsEvent, domainPolitics, new ArrayList<>());
@@ -36,10 +38,10 @@ public class Main {
         Reader lorena = new Reader("Lorena", dispatcher);
         Reader dragan = new Reader("Dragan", dispatcher);
         Reader harris = new Reader("Harris", dispatcher);
-        claudia.run();
-        lorena.run();
-        dragan.run();
-        harris.run();
+        claudia.start();
+        lorena.start();
+        dragan.start();
+        harris.start();
 
         ArrayList<Filter> filersClaudia_Fitness = new ArrayList<>();
         filersClaudia_Fitness.add(new DateFilter(new Date(20, 10, 2020), new Date(28, 11, 2020)));
@@ -82,6 +84,13 @@ public class Main {
         dragan.subscribeToEvent(addNewsEvent, domainSport, filersDragan_Sport);
         dragan.subscribeToEvent(modifyNewsEvent, domainSport, filersDragan_Sport);
         dragan.subscribeToEvent(eraseNewsEvent, domainSport, filersDragan_Sport);
+
+        ArrayList<Filter> filersDragan_HealthCare = new ArrayList<>();
+        filersDragan_HealthCare.add(new DateFilter(new Date(12, 10, 2020), new Date(12, 11, 2020)));
+        filersDragan_HealthCare.add(new EditorFilter(e2));
+        dragan.subscribeToEvent(addNewsEvent, domainHealthCare, filersDragan_HealthCare);
+        dragan.subscribeToEvent(modifyNewsEvent, domainHealthCare, filersDragan_HealthCare);
+        dragan.subscribeToEvent(eraseNewsEvent, domainHealthCare, filersDragan_HealthCare);
 
         ArrayList<Filter> filersHarris_Sport = new ArrayList<>();
         filersHarris_Sport.add(new DateFilter(new Date(12, 10, 2020), new Date(12, 11, 2020)));

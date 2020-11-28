@@ -14,6 +14,6 @@ public class EditorFilter extends Filter{
         if(news.getAutor().equals(this.editor.getName()))
             result =true;
 
-        return false;
+        return result;
     }
 }

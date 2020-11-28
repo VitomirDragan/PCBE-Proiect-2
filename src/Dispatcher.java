@@ -6,6 +6,14 @@ public class Dispatcher implements Runnable {
     private Queue<Event> eventQueue = new LinkedList<Event>();
     private HashMap<String, ArrayList<Subscription>> eventSubscriptions = new HashMap<String, ArrayList<Subscription>>();
 
+    public Dispatcher()
+    {
+        eventSubscriptions.put(Main.addNewsEvent, new ArrayList<Subscription>());
+        eventSubscriptions.put(Main.modifyNewsEvent, new ArrayList<Subscription>());
+        eventSubscriptions.put(Main.eraseNewsEvent, new ArrayList<Subscription>());
+        eventSubscriptions.put(Main.readNewsEvent, new ArrayList<Subscription>());
+    }
+
     public void run() {
         while (true) {
             processNextEvent();
@@ -17,6 +25,7 @@ public class Dispatcher implements Runnable {
             synchronize.lockEventQueue();
             Event e = eventQueue.remove();
             synchronize.unlockEventQueue();
+            System.out.println("Processing " + e.getEventType() + " - " + e.getCurrentNews().getContent());
 
             synchronize.startReadEventSubscription();
             ArrayList<Subscription> subscriptions = new ArrayList<>(eventSubscriptions.get(e.getEventType()));
@@ -32,15 +41,17 @@ public class Dispatcher implements Runnable {
                     subscription.getActor().myNotify(e);
             }
         } catch (NoSuchElementException exec) {
-            System.out.println(exec);
+            synchronize.unlockEventQueue();
         }
 
     }
 
     public void postEvent(Event e) {
+        //System.out.println("Posting " + e.getEventType() + " - " + e.getCurrentNews().getContent());
         synchronize.lockEventQueue();
         eventQueue.add(e);
         synchronize.unlockEventQueue();
+        //System.out.println("Posted " + e.getEventType() + " - " + e.getCurrentNews().getContent());
     }
 
     public void acceptEventSubscription(String eventType, Actor actor, String domainType, ArrayList<Filter> filter) {

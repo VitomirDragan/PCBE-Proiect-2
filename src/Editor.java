@@ -8,16 +8,23 @@ public class Editor extends Actor{
 
     public void myNotify(Event e)
     {
-       if(e.getEventType() == Main.readNewsEvent)
-           readNewsCounter.put(e.getCurrentNews(), readNewsCounter.get(e.getCurrentNews()) + 1);
-
+       if(e.getEventType() == Main.readNewsEvent) {
+           if(readNewsCounter.get(e.getCurrentNews()) == null){
+               readNewsCounter.put(e.getCurrentNews(), 1);
+           }else {
+               readNewsCounter.put(e.getCurrentNews(), readNewsCounter.get(e.getCurrentNews()) + 1);
+           }
+           System.out.println(e.getEventType() + " - " + e.getCurrentNews().getContent() + " - " + readNewsCounter.get(e.getCurrentNews()));
+       }
     }
 
     public void addNews(News n)
     {
         Event e = new Event(Main.addNewsEvent, n);
-        dispatcher.postEvent(e);
+        //System.out.println("Adding " + e.getEventType() + " - " + e.getCurrentNews().getContent());
         readNewsCounter.put(e.getCurrentNews(), 0);
+        dispatcher.postEvent(e);
+
     }
 
     public void eraseNews(News n)
