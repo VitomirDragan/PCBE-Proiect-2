@@ -16,6 +16,15 @@ public class News {
         this.domain = domain;
     }
 
+    public News(int id, String content, Date datePublished, String autor, String domain) {
+        this.idNews = id;
+        this.content = content;
+        this.datePublished = datePublished;
+        this.dateLastEdited = datePublished;
+        this.autor = autor;
+        this.domain = domain;
+    }
+
     public String getContent() {
         return content;
     }
