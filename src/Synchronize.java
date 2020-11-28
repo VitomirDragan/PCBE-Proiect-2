@@ -1,90 +1,62 @@
 import java.util.concurrent.Semaphore;
 
 public class Synchronize {
-    private int numReadersPosts = 0;
-    private Semaphore mutexPosts = new Semaphore(1, true);
-    private Semaphore wlockMessages = new Semaphore(1, true);
-    private Semaphore wlockPosts = new Semaphore(1, true);
-    private Semaphore wlockSubscribers = new Semaphore(1, true);
-    private Semaphore binarySemaphore = new Semaphore(1, true);
+    private int numReadersEventSubscribers = 0;
+    private final Semaphore mutexReadEventSubscriptions = new Semaphore(1, true);
+    private final Semaphore mutexWriteEventSubscriptions = new Semaphore(1, true);
+    private final Semaphore binaryEventQueueSemaphore = new Semaphore(1, true);
 
-
-    public void startWriteMessages() {
+    public void startReadEventSubscription() {
         try {
-            wlockMessages.acquire();
+            mutexReadEventSubscriptions.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public void endWriteMessages() {
-        wlockMessages.release();
-    }
-
-    public void startReadPosts() {
-        try {
-            mutexPosts.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        numReadersPosts++;
-        if (numReadersPosts == 1) {
+        numReadersEventSubscribers++;
+        if (numReadersEventSubscribers == 1) {
             try {
-                wlockPosts.acquire();
+                mutexWriteEventSubscriptions.acquire();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        mutexPosts.release();
+        mutexReadEventSubscriptions.release();
     }
 
-    public void endReadPosts() {
+    public void endReadEventSubscriptions() {
         try {
-            mutexPosts.acquire();
+            mutexReadEventSubscriptions.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        numReadersPosts--;
-        if (numReadersPosts == 0)
-            wlockPosts.release();
-        mutexPosts.release();
+        numReadersEventSubscribers--;
+        if (numReadersEventSubscribers == 0)
+            mutexWriteEventSubscriptions.release();
+        mutexReadEventSubscriptions.release();
     }
 
-    public void startWritePosts() {
+    public void startWriteEventSubscriptions() {
         try {
-            wlockPosts.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void endWritePosts() {
-        wlockPosts.release();
-    }
-
-
-    public void startWriteSubscribers() {
-        try {
-            wlockSubscribers.acquire();
+            mutexWriteEventSubscriptions.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void endWriteSubscribers() {
-        wlockSubscribers.release();
+    public void endWriteEventSubscriptions() {
+        mutexWriteEventSubscriptions.release();
     }
 
-    public void lock() {
+    public void lockEventQueue() {
         try {
-            binarySemaphore.acquire();
+            binaryEventQueueSemaphore.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void unlock() {
-        binarySemaphore.release();
+    public void unlockEventQueue() {
+        binaryEventQueueSemaphore.release();
     }
 }
