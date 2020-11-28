@@ -18,16 +18,14 @@ public class Dispatcher implements Runnable {
 
     public void processNextEvent(){
         try {
-            Event event = eventQueue.remove();
+            Event e = eventQueue.remove();
+            ArrayList<Subscription> subscriptions = eventSubscriptions.get(e.getEventType());
+            for(Subscription subscription : subscriptions){
+                subscription.getActor().myNotify(e);
+            }
         }
         catch(NoSuchElementException exec){
             System.out.println(exec);
-        }
-
-        Event e = eventQueue.remove();
-        ArrayList<Subscription> subscriptions = eventSubscriptions.get(e.getEventType());
-        for(Subscription subscription : subscriptions){
-            subscription.getActor().myNotify(e);
         }
     }
 
@@ -36,22 +34,17 @@ public class Dispatcher implements Runnable {
         eventQueue.add(e);
     }
 
-    public void acceptEventSubscription(String domainType, Actor actor)
+    public void acceptEventSubscription(String eventType, Actor actor, String domainType, Filter filter)
     {
-        for(Event e : eventQueue) {
-            if (e.getEventType().equals(domainType))
-            {
-                ArrayList<Actor> readers = subscribedReaders.get(domainType);
-                readers.add(actor);
-                subscribedReaders.put(domainType, readers);
-            }
-        }
+        Subscription subscription = new Subscription(actor, domainType, filter);
+        ArrayList<Subscription> subscriptions = eventSubscriptions.get(eventType);
+        subscriptions.add(subscription);
     }
 
-    public void acceptDomainSubscription(String domain, Actor actor, Filter filter)
-    {
-        Subscription subscription = new Subscription(actor, domain, filter);
-        ArrayList<Subscription> subscriptions = eventSubscriptions.get()
-    }
+//    public void acceptDomainSubscription(String domain, Actor actor, Filter filter)
+//    {
+//        Subscription subscription = new Subscription(actor, domain, filter);
+//        ArrayList<Subscription> subscriptions = eventSubscriptions.get()
+//    }
 
 }
